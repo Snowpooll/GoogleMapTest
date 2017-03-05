@@ -22,6 +22,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap=null;
     private SupportMapFragment mapFragment;
     private LatLng latLng;
+    private LatLng location;
     private int width,height;
     private double longitude,latitude;
 
@@ -54,8 +55,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         longitude = 139.76;
         latLng = new LatLng(latitude,longitude);
 
+        //マーカーの追加
+        mMap.addMarker(new MarkerOptions().position(latLng).title("Tokyo"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+
+        //タップしたときの処理
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng taplatLng) {
+                //タップした場所の緯度経度取得
+                location = new LatLng(taplatLng.latitude,taplatLng.longitude);
+                //タップした場所へマーカー設定
+                mMap.addMarker(new MarkerOptions().position(location).title("tappiint is "+taplatLng.latitude+" : "+taplatLng.longitude));
+                //カメラ移動
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,14));
+            }
+        });
+
+        //長押しの処理
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng longtaplatLng) {
+                LatLng longtaplocation = new LatLng(longtaplatLng.latitude,longtaplatLng.longitude);
+                mMap.addMarker(new MarkerOptions().position(longtaplocation).title("longtap point is "+longtaplatLng.latitude+" : "+longtaplatLng.longitude));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(longtaplocation,14));
+            }
+        });
         //アイコン画像をマーカーにする
-        setIcon(latitude,longitude);
+//        setIcon(latitude,longitude);
 
 
 //        // Add a marker in Sydney and move the camera
@@ -67,60 +94,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(35.68, 139.76),12);
 //        mMap.moveCamera(cameraUpdate);
     }
-
-    //マーカーの設定
-    private void setMarker(double latitude,double longitude){
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Marker");
-        //地図にマーカー設定
-        mMap.addMarker(markerOptions);
-        //ズーム設定
-        zoomMap(latitude, longitude);
-    }
-
-    //アイコン設定
-    private void setIcon(double latitude, double longitude){
-        //map に貼り付ける Bitmapdescripter 設定
-        BitmapDescriptor descriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker_dark);
-        //貼り付け設定
-        GroundOverlayOptions overlayOptions = new GroundOverlayOptions();
-        overlayOptions.image(descriptor);
-
-        //アンカーの座標指定
-        overlayOptions.anchor(0.5f,0.5f);
-
-        //地図に表示する画像の大きさ設定
-        overlayOptions.position(latLng,300f,300f);
-
-        //設定した画像をマップへ表示
-        GroundOverlay overlay = mMap.addGroundOverlay(overlayOptions);
-
-        //ズーム設定
-        zoomMap(latitude,longitude);
-
-        //透明度設定
-        overlay.setTransparency(0.0F);
-    }
-
-    private void zoomMap(double latitude, double longitude){
-        // 表示する東西南北の緯度経度を設定
-        double south = latitude * (1-0.00005);
-        double west = longitude * (1-0.00005);
-        double north = latitude * (1+0.00005);
-        double east = longitude * (1+0.00005);
-
-        // LatLngBounds (LatLng southwest, LatLng northeast)
-        LatLngBounds bounds = LatLngBounds.builder()
-                .include(new LatLng(south , west))
-                .include(new LatLng(north, east))
-                .build();
-
-        width = getResources().getDisplayMetrics().widthPixels;
-        height = getResources().getDisplayMetrics().heightPixels;
-
-        // static CameraUpdate.newLatLngBounds(LatLngBounds bounds, int width, int height, int padding)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0));
-
-    }
+//
+//    //マーカーの設定
+//    private void setMarker(double latitude,double longitude){
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(latLng);
+//        markerOptions.title("Marker");
+//        //地図にマーカー設定
+//        mMap.addMarker(markerOptions);
+//        //ズーム設定
+//        zoomMap(latitude, longitude);
+//    }
+//
+//    //アイコン設定
+//    private void setIcon(double latitude, double longitude){
+//        //map に貼り付ける Bitmapdescripter 設定
+//        BitmapDescriptor descriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker_dark);
+//        //貼り付け設定
+//        GroundOverlayOptions overlayOptions = new GroundOverlayOptions();
+//        overlayOptions.image(descriptor);
+//
+//        //アンカーの座標指定
+//        overlayOptions.anchor(0.5f,0.5f);
+//
+//        //地図に表示する画像の大きさ設定
+//        overlayOptions.position(latLng,300f,300f);
+//
+//        //設定した画像をマップへ表示
+//        GroundOverlay overlay = mMap.addGroundOverlay(overlayOptions);
+//
+//        //ズーム設定
+//        zoomMap(latitude,longitude);
+//
+//        //透明度設定
+//        overlay.setTransparency(0.0F);
+//    }
+//
+//    private void zoomMap(double latitude, double longitude){
+//        // 表示する東西南北の緯度経度を設定
+//        double south = latitude * (1-0.00005);
+//        double west = longitude * (1-0.00005);
+//        double north = latitude * (1+0.00005);
+//        double east = longitude * (1+0.00005);
+//
+//        // LatLngBounds (LatLng southwest, LatLng northeast)
+//        LatLngBounds bounds = LatLngBounds.builder()
+//                .include(new LatLng(south , west))
+//                .include(new LatLng(north, east))
+//                .build();
+//
+//        width = getResources().getDisplayMetrics().widthPixels;
+//        height = getResources().getDisplayMetrics().heightPixels;
+//
+//        // static CameraUpdate.newLatLngBounds(LatLngBounds bounds, int width, int height, int padding)
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0));
+//
+//    }
 }
